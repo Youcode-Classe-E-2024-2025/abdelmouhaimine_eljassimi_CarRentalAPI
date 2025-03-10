@@ -20,7 +20,16 @@ class CarController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'brand' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'year' => 'required|integer|min:1900|max:' . date('Y'),
+            'price_per_day' => 'required|numeric|min:0',
+            'available' => 'boolean',
+        ]);
+
+        $car = Car::create($request->all());
+        return response()->json($car, 201);
     }
 
     /**

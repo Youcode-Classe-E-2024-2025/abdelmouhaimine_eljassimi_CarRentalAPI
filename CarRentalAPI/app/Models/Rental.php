@@ -8,7 +8,7 @@ class Rental extends Model
 {
 
 
-    protected $table = 'rental';
+    protected $table = 'rentals';
     protected $guarded = [];
 
     public function user()

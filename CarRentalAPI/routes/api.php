@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\RentalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,4 +15,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::apiResource('cars', CarController::class);
+
+Route::get('/rentals', [RentalController::class, 'index'])->middleware('auth:sanctum');
+Route::post('/rentals', [RentalController::class, 'store'])->middleware('auth:sanctum');
 

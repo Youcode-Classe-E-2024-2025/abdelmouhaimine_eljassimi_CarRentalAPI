@@ -16,6 +16,9 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanct
 
 Route::apiResource('cars', CarController::class);
 
-Route::get('/rentals', [RentalController::class, 'index'])->middleware('auth:sanctum');
-Route::post('/rentals', [RentalController::class, 'store'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/rentals', [RentalController::class, 'index']);
+    Route::post('/rentals', [RentalController::class, 'store']);
+    Route::post('/rentals/{rental}/cancel', [RentalController::class, 'cancel']);
+});
 

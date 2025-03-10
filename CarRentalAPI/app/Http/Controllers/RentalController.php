@@ -26,7 +26,6 @@ class RentalController extends Controller
         }
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
@@ -57,6 +56,24 @@ class RentalController extends Controller
 
         return response()->json($rental, 201);
     }
+
+    public function cancel(Rental $rental)
+    {
+        if ($rental->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ($rental->status !== 'pending') {
+            return response()->json(['error' => 'Rental cannot be cancelled'], 400);
+        }
+
+        $rental->update(['status' => 'cancelled']);
+
+        $rental->car->update(['available' => true]);
+
+        return response()->json(['message' => 'Rental cancelled successfully']);
+    }
+
 
 
 

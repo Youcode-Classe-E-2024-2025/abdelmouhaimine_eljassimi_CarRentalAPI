@@ -10,5 +10,10 @@ class Car extends Model
     protected $table = 'cars';
     protected $fillable = ['brand','model','year','price_per_day','available'];
 
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class);
+    }
+
 
 }

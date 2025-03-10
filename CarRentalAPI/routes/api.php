@@ -5,6 +5,7 @@ use App\Http\Controllers\CarController;
 use App\Http\Controllers\RentalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,3 +23,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/rentals/{rental}/cancel', [RentalController::class, 'cancel']);
 });
 
+
+Route::post('/rentals/{rentalId}/payment', [PaymentController::class, 'createPaymentIntent']);

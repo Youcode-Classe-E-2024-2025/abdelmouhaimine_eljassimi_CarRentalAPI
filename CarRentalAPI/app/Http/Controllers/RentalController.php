@@ -6,9 +6,38 @@ use Illuminate\Http\Request;
 use App\Models\Rental;
 use App\Models\Car;
 
+/**
+ * @OA\Tag(
+ *     name="Rentals",
+ *     description="Endpoints for managing car rentals"
+ * )
+ */
 class RentalController extends Controller
 {
-
+    /**
+     * @OA\Get(
+     *     path="/rentals",
+     *     summary="Get all rentals for the authenticated user",
+     *     tags={"Rentals"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of rentals",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Rental")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error"
+     *     )
+     * )
+     */
     public function index()
     {
         try {
@@ -26,6 +55,40 @@ class RentalController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/rentals",
+     *     summary="Create a new rental",
+     *     tags={"Rentals"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"car_id", "start_date", "end_date"},
+     *             @OA\Property(property="car_id", type="integer", example=1),
+     *             @OA\Property(property="start_date", type="string", format="date", example="2023-10-01"),
+     *             @OA\Property(property="end_date", type="string", format="date", example="2023-10-05")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Rental created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Rental")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad request (e.g., car not available)"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error"
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -57,6 +120,40 @@ class RentalController extends Controller
         return response()->json($rental, 201);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/rentals/{rental}/cancel",
+     *     summary="Cancel a rental",
+     *     tags={"Rentals"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="rental",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the rental to cancel",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Rental cancelled successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Rental cancelled successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad request (e.g., rental cannot be cancelled)"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error"
+     *     )
+     * )
+     */
     public function cancel(Rental $rental)
     {
         if ($rental->user_id !== auth()->id()) {
@@ -73,8 +170,4 @@ class RentalController extends Controller
 
         return response()->json(['message' => 'Rental cancelled successfully']);
     }
-
-
-
-
 }
